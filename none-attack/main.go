@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	jwt "./jwt-go"
 	"./jwt-go/request"
 	"github.com/gin-gonic/gin"
 )
-
-const secretKey = "75c92a074c341e9964329c0550c2673730ed8479c885c43122c90a2843177d5ef21cb50cfadcccb20aeb730487c11e09ee4dbbb02387242ef264e74cbee97213"
 
 func main() {
 	r := gin.Default()
@@ -24,10 +23,11 @@ func main() {
 
 		token.Claims = jwt.MapClaims{
 			"user": "guest",
+			"iat":  time.Now(),
 			"exp":  time.Now().Add(time.Hour * 1).Unix(),
 		}
 
-		tokenString, err := token.SignedString([]byte(secretKey))
+		tokenString, err := token.SignedString([]byte(os.Getenv("SIGNINGKEY")))
 		if err == nil {
 			c.JSON(200, gin.H{"token": tokenString})
 		} else {

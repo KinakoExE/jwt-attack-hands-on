@@ -43,7 +43,7 @@ var admin = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	})
 
 	claims := token.Claims.(jwt.MapClaims)
-	if claims["username"] == "admin" {
+	if claims["user"] == "admin" {
 		post := &post{
 			Message: "Congratz! You bruteforced JWT secret!",
 		}
