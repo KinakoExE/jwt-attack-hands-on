@@ -1,17 +1,16 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
+	"time"
 
-	"./auth"
+	"github.com/gin-gonic/gin"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/dgrijalva/jwt-go/request"
-	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 )
 
 type post struct {
@@ -19,40 +18,56 @@ type post struct {
 }
 
 func main() {
-	r := mux.NewRouter()
-	r.Handle("/", public)
-	r.Handle("/token", auth.GetTokenHandler)
-	r.Handle("/admin", auth.JwtMiddleware.Handler(admin))
+	r := gin.Default()
+	r.GET("/", top)
+	r.GET("/token", token)
+	r.GET("/admin", admin)
 
-	if err := http.ListenAndServe(":5555", r); err != nil {
-		log.Fatalln("ListenAndServe:", nil)
+	r.Run(":5555")
+}
+
+var top = func(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "You need a token to access /admin. Plz acess /token."})
+}
+
+var token = func(c *gin.Context) {
+
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatalln(".env file missing")
+	}
+	token := jwt.New(jwt.SigningMethodHS256)
+
+	claims := token.Claims.(jwt.MapClaims)
+	claims["user"] = "guest"
+	claims["iat"] = time.Now()
+	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+
+	tokenString, _ := token.SignedString([]byte(os.Getenv("SECRET")))
+	if err == nil {
+		c.JSON(200, gin.H{"token": tokenString})
+	} else {
+		c.JSON(500, gin.H{"message": "Something is wrong"})
 	}
 }
 
-var public = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-	post := &post{
-		Message: "You need a token to access /admin. Plz acess /token.",
-	}
-	json.NewEncoder(w).Encode(post)
-})
-
-var admin = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-	token, _ := request.ParseFromRequest(r, request.OAuth2Extractor, func(token *jwt.Token) (interface{}, error) {
-		b := []byte(os.Getenv("SIGNINGKEY"))
+var admin = func(c *gin.Context) {
+	token, err := request.ParseFromRequest(c.Request, request.OAuth2Extractor, func(token *jwt.Token) (interface{}, error) {
+		b := []byte(os.Getenv("SECRET"))
 		return b, nil
 	})
 
+	if err.Error() == "no token present in request" {
+		c.JSON(500, gin.H{"message": "JWTトークンをAuthorizationヘッダにつけてください"})
+		return
+	}
+
 	claims := token.Claims.(jwt.MapClaims)
 	if claims["user"] == "admin" {
-		post := &post{
-			Message: "Congratz! You bruteforced JWT secret!",
-		}
-		json.NewEncoder(w).Encode(post)
+		msg := fmt.Sprintf("Hello %s !! Congrats you're successful in exploiting JWT by brute force!!", claims["user"])
+		c.JSON(200, gin.H{"message": msg})
 	} else {
-		msg := fmt.Sprintf("Your username is %s ! You are not admin! Get out!!", claims["username"])
-		post := &post{
-			Message: msg,
-		}
-		json.NewEncoder(w).Encode(post)
+		msg := fmt.Sprintf("Your username is %s ! You are not admin! Get out!!", claims["user"])
+		c.JSON(200, gin.H{"message": msg})
 	}
-})
+}
