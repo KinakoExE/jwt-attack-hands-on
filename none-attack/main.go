@@ -38,19 +38,24 @@ var token = func(c *gin.Context) {
 	if err == nil {
 		c.JSON(200, gin.H{"token": tokenString})
 	} else {
-		c.JSON(500, gin.H{"message": "Something is wrong"})
+		c.JSON(500, gin.H{"message": "Something went wrong"})
 	}
 }
 
 var admin = func(c *gin.Context) {
 
-	token, err := request.ParseFromRequest(c.Request, request.OAuth2Extractor, func(token *jwt.Token) (interface{}, error) {
+	if c.Request.Header["Authorization"] == nil {
+		c.JSON(401, gin.H{"message": "Please set your JWT in Authorization header"})
+		return
+	}
+
+	token, err := request.ParseFromRequest(c.Request, request.AuthorizationHeaderExtractor, func(token *jwt.Token) (interface{}, error) {
 		b := jwt.UnsafeAllowNoneSignatureType // alg: noneを意図的に許可
 		return b, nil
 	})
 
 	if err != nil {
-		c.JSON(500, gin.H{"message": "エラーが発生しました JWTのフォーマットが正しいか確認してください"})
+		c.JSON(500, gin.H{"message": "Something went wrong, please check whether your JWT format is valid or not"})
 		return
 	}
 

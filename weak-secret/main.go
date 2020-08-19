@@ -52,13 +52,19 @@ var token = func(c *gin.Context) {
 }
 
 var admin = func(c *gin.Context) {
+
+	if c.Request.Header["Authorization"] == nil {
+		c.JSON(401, gin.H{"message": "Please set your JWT in Authorization header"})
+		return
+	}
+
 	token, err := request.ParseFromRequest(c.Request, request.OAuth2Extractor, func(token *jwt.Token) (interface{}, error) {
 		b := []byte(os.Getenv("SECRET"))
 		return b, nil
 	})
 
 	if err != nil {
-		c.JSON(500, gin.H{"message": "エラーが発生しました JWTのフォーマットが正しいか確認してください"})
+		c.JSON(500, gin.H{"message": "Something went wrong, please check whether your JWT format is valid or not"})
 		return
 	}
 
