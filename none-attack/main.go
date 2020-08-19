@@ -49,8 +49,8 @@ var admin = func(c *gin.Context) {
 		return b, nil
 	})
 
-	if err.Error() == "no token present in request" {
-		c.JSON(500, gin.H{"message": "JWTトークンをAuthorizationヘッダにつけてください"})
+	if err != nil {
+		c.JSON(500, gin.H{"message": "エラーが発生しました JWTのフォーマットが正しいか確認してください"})
 		return
 	}
 
