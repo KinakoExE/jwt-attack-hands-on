@@ -27,7 +27,7 @@ func main() {
 }
 
 var top = func(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "You need a token to access /admin. Plz acess /token."})
+	c.JSON(200, gin.H{"message": "You need a token to access /admin. Please access /token."})
 }
 
 var token = func(c *gin.Context) {
@@ -70,7 +70,7 @@ var admin = func(c *gin.Context) {
 
 	claims := token.Claims.(jwt.MapClaims)
 	if claims["user"] == "admin" {
-		msg := fmt.Sprintf("Hello %s !! Congrats you're successful in exploiting JWT by brute force!!", claims["user"])
+		msg := fmt.Sprintf("Hello %s !! Congrats you successfully exploited JWT by brute force!!", claims["user"])
 		c.JSON(200, gin.H{"message": msg})
 	} else {
 		msg := fmt.Sprintf("Your username is %s ! You are not admin! Get out!!", claims["user"])
