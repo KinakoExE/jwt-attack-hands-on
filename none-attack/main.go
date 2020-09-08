@@ -49,15 +49,15 @@ var admin = func(c *gin.Context) {
 		return
 	}
 
-	token, err := request.ParseFromRequest(c.Request, request.AuthorizationHeaderExtractor, func(token *jwt.Token) (interface{}, error) {
+	token, _ := request.ParseFromRequest(c.Request, request.AuthorizationHeaderExtractor, func(token *jwt.Token) (interface{}, error) {
 		b := jwt.UnsafeAllowNoneSignatureType // alg: noneを意図的に許可
 		return b, nil
 	})
 
-	if err != nil {
-		c.JSON(500, gin.H{"message": "Something went wrong, please check whether your JWT format is valid or not"})
-		return
-	}
+	// if err != nil {
+	// 	c.JSON(500, gin.H{"message": "Something went wrong, please check whether your JWT format is valid or not"})
+	// 	return
+	// }
 
 	claims := token.Claims.(jwt.MapClaims)
 	if claims["user"] == "admin" {
