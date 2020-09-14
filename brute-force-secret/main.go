@@ -74,6 +74,6 @@ var admin = func(c *gin.Context) {
 		c.JSON(200, gin.H{"message": msg})
 	} else {
 		msg := fmt.Sprintf("Your username is %s ! You are not admin! Get out!!", claims["user"])
-		c.JSON(200, gin.H{"message": msg})
+		c.JSON(403, gin.H{"message": msg})
 	}
 }

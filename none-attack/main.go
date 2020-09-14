@@ -54,17 +54,12 @@ var admin = func(c *gin.Context) {
 		return b, nil
 	})
 
-	// if err != nil {
-	// 	c.JSON(500, gin.H{"message": "Something went wrong, please check whether your JWT format is valid or not"})
-	// 	return
-	// }
-
 	claims := token.Claims.(jwt.MapClaims)
 	if claims["user"] == "admin" {
 		msg := fmt.Sprintf("Hello, %s !! Congrats this is JWT none attack!!", claims["user"])
 		c.JSON(200, gin.H{"message": msg})
 	} else {
 		msg := fmt.Sprintf("Hello, %s , but you are not admin!", claims["user"])
-		c.JSON(200, gin.H{"message": msg})
+		c.JSON(403, gin.H{"message": msg})
 	}
 }
