@@ -1,6 +1,7 @@
 ## ハンズオンの環境構築
 ```zsh
 cd none-attack // またはbrute-force-secret
+go get // 必要なライブラリをすべて入れる
 go run main.go
 ```
 
@@ -18,7 +19,7 @@ vim jwt.txt // JWTをテキストファイルに書く
 ```
 
 ## ハンズオンのゴール
-- none-attack、brute-force-secret共に`user:admin`として`/admin`にアクセスすることがゴールとなります
+- none-attack、brute-force-secret共に`"user":"admin"`として`/admin`にアクセスすることがゴールとなります
 
 ## エンドポイントへのアクセス方法
 - `curl http://localhost:5555/token`
