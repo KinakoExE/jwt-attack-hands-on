@@ -5,8 +5,8 @@ import (
 	"os"
 	"time"
 
-	jwt "github.com/KinakoExE/jwt-go"
-	"github.com/KinakoExE/jwt-go/request"
+	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go/request"
 
 	"github.com/gin-gonic/gin"
 )

@@ -1,4 +1,6 @@
 ## ハンズオンの環境構築
+
+### local
 ```zsh
 cd none-attack // またはbrute-force-secret
 go get // 必要なライブラリをすべて入れる
@@ -17,6 +19,17 @@ cd JohnTheRipper/run
 vim jwt.txt // JWTをテキストファイルに書く
 ./john jwt.txt // jwt.txtの中身はさっきのJWT
 ```
+
+### docker
+```zsh
+# build and run for none-attack hands-on
+make docker-none-attack
+
+# build and run for none-attack hands-on
+# if you want to use JohnTheRipper, you execute `docker exec -it <process id> sh` and use `./run/john jwt.txt`
+make docker-brute-force-secret
+```
+
 
 ## ハンズオンのゴール
 - none-attack、brute-force-secret共に`"user":"admin"`として`/admin`にアクセスすることがゴールとなります
