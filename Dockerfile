@@ -1,4 +1,4 @@
-FROM golang:1.15-alpine AS base
+FROM golang:1.18-alpine AS base
 
 ENV GOPATH=
 EXPOSE 5555
@@ -15,7 +15,7 @@ WORKDIR none-attack/
 ENTRYPOINT ["go", "run", "main.go"]
 
 # build JohnTheRipper binary and conf
-FROM golang:1.15-alpine AS john-builder
+FROM golang:1.18-alpine AS john-builder
 WORKDIR /app
 RUN apk add --no-cache git build-base perl
 RUN git clone --depth 1 https://github.com/magnumripper/JohnTheRipper
