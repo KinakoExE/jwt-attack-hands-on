@@ -1,23 +1,39 @@
+# Notification
+**Docker上で動くようになりました🐳**
+(Special Thanks👏 -> @kyoto7250)
+
+---
+
+
 ## ハンズオンの環境構築
 
 ### local
 ```zsh
-cd none-attack // またはbrute-force-secret
-go get // 必要なライブラリをすべて入れる
+# またはbrute-force-secret
+cd none-attack 
+
+# 必要なライブラリをすべて入れる
+go get 
 go run main.go
 ```
 
 John the Ripperの環境構築
-```
-git clone https://github.com/magnumripper/JohnTheRipper // John the Ripperの公式リポジトリからclone
+```zsh
+# John the Ripperの公式リポジトリからclone
+git clone https://github.com/magnumripper/JohnTheRipper
 cd JohnTheRipper/src
 ./configure
-make -s clean && make -sj4 // ビルド
+# ビルド
+make -s clean && make -sj4
 
-// JWTのsecretをブルートフォースしたい場合
+# JWTのsecretをブルートフォースしたい場合
 cd JohnTheRipper/run
-vim jwt.txt // JWTをテキストファイルに書く
-./john jwt.txt // jwt.txtの中身はさっきのJWT
+
+# JWTをテキストファイルに書く(Dockerの場合はviを利用してください)
+vim jwt.txt
+
+# jwt.txtの中身は総当たりしてsecretを調べたいJWT
+./john jwt.txt
 ```
 
 ### docker
@@ -43,5 +59,6 @@ make docker-brute-force-secret
 `curl http://localhost:5555/admin -H "Authorization: Bearer <JWT>"`
 
 ## その他
-- none-attack内のjwt-goはこのハンズオンのために一部ライブラリ内のコードを変更しています
+- ~~none-attack内のjwt-goはこのハンズオンのために一部ライブラリ内のコードを変更しています~~
+  - **2022年現在、ライブラリの関係でsignature部分を削除しなくてもalgorithmをnoneに書き換えて動くようにしています**
 - .envファイルにはJWTの署名に用いる鍵を設定しています。brute-force-secretの.envを先に見てしまうとネタバレになってしまうので、ハンズオンが終わった後に開くことをお勧めします
